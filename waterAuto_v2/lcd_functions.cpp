@@ -9,7 +9,7 @@ SoftwareSerial LCD = SoftwareSerial(0, txPin);
 int noOfAlarms=1;
 int alarmHour[3]={1};
 int alarmMin[3]={30};
-bool alarmAM_PM[3] ={0}; // 0 is AM, 1 is PM
+int alarmAM_PM[3] ={0}; // 0 is AM, 1 is PM
 long alarmDuartion = 30; // in minutes
 long currentTimeHour=1;
 long currentTimeMin=30;
@@ -268,26 +268,37 @@ void runningState(){
 	if(toUpdateAlarm){
 		//write to eeprom
 		if(noOfAlarms == 1){
-                        alarmTimeInSec = (((alarmHour[0] * 60) * 60) + (alarmMin[0] * 60)) + (alarmAM_PM[0] * 43200);
+                        //Serial.println("Setting alarm 1");
+                        alarmTimeInSec = (((long(alarmHour[0]) * 60) * 60) + (long(alarmMin[0]) * 60)) + (long(alarmAM_PM[0]) * 43200);
+                        //Serial.print("alarmTimeInSec >> ");
+                        //Serial.println(alarmTimeInSec);
 			EEPROMWritelong(100,alarmTimeInSec);
 			EEPROMWritelong(105,-1);
 			EEPROMWritelong(110,-1);
 		}else if(noOfAlarms == 2){
-                        long alarmTimeInSec1 = (((alarmHour[0] * 60) * 60) + (alarmMin[0] * 60)) + (alarmAM_PM[0] * 43200);
-                        long alarmTimeInSec2 = (((alarmHour[1] * 60) * 60) + (alarmMin[1] * 60)) + (alarmAM_PM[1] * 43200);
+                        //Serial.println("Setting alarm 2");
+                        long alarmTimeInSec1 = (((long(alarmHour[0]) * 60) * 60) + (long(alarmMin[0]) * 60)) + (long(alarmAM_PM[0]) * 43200);
+                        long alarmTimeInSec2 = (((long(alarmHour[1]) * 60) * 60) + (long(alarmMin[1]) * 60)) + (long(alarmAM_PM[1]) * 43200);
                         long alarmTimeAndDur = alarmTimeInSec1 + (alarmDuartion * 60);
+                        //Serial.print("alarmTimeInSec1 >> ");
+                        //Serial.println(alarmTimeInSec1);
+                        //Serial.print("alarmTimeInSec2 >> ");
+                        //Serial.println(alarmTimeInSec2);
                         EEPROMWritelong(100,alarmTimeInSec1);
 			EEPROMWritelong(105,alarmTimeInSec2);
                         EEPROMWritelong(110,-1);
 		}else if(noOfAlarms == 3){
-                        long alarmTimeInSec1 = (((alarmHour[0] * 60) * 60) + (alarmMin[0] * 60)) + (alarmAM_PM[0] * 43200);
-                        long alarmTimeInSec2 = (((alarmHour[1] * 60) * 60) + (alarmMin[1] * 60)) + (alarmAM_PM[1] * 43200);
-                        long alarmTimeInSec3 = (((alarmHour[2] * 60) * 60) + (alarmMin[2] * 60)) + (alarmAM_PM[2] * 43200);
+                        //Serial.println("Setting alarm 3");
+                        long alarmTimeInSec1 = (((long(alarmHour[0]) * 60) * 60) + (long(alarmMin[0]) * 60)) + (long(alarmAM_PM[0]) * 43200);
+                        long alarmTimeInSec2 = (((long(alarmHour[1]) * 60) * 60) + (long(alarmMin[1]) * 60)) + (long(alarmAM_PM[1]) * 43200);
+                        long alarmTimeInSec3 = (((long(alarmHour[2]) * 60) * 60) + (long(alarmMin[2]) * 60)) + (long(alarmAM_PM[2]) * 43200);
                         EEPROMWritelong(100,alarmTimeInSec1);
 			EEPROMWritelong(105,alarmTimeInSec2);
 			EEPROMWritelong(110,alarmTimeInSec3);
 		}
                 alarmTimeInSec = alarmDuartion*60;
+                //Serial.print("alarmDuartion >> ");
+                //Serial.println(alarmTimeInSec);
 	        EEPROMWritelong(120,alarmTimeInSec);
                 alarmHour[3]={1};
                 alarmMin[3]={30};
@@ -296,7 +307,6 @@ void runningState(){
 	}
 	if(toUpdateTime){
 	    //update RTC time here
-           //long currentTimeInSec = (((currentTimeHour * 60) * 60) + (currentTimeMin * 60)) + (currentTimeAM_PM * 43200);
            long setTimeHour = currentTimeHour;
            if(currentTimeAM_PM == 1){
              setTimeHour = setTimeHour + 12;
@@ -344,5 +354,4 @@ void backLightOn(){
 void backLightOff(){
 	LCD.write(byte(18)); //backlight off
 }
-
 
